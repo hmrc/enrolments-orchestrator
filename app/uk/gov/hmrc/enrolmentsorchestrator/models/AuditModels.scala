@@ -43,15 +43,17 @@ case class AgentDeleteResponse(ARN: String, terminationDate: Long, success: Bool
 
 object AgentDeleteResponse{
     implicit val auditWrites: OWrites[AgentDeleteResponse] = (
-      (JsPath \ "ARN").write[String] and
+      (JsPath \ "ARN").write[String]           and
       (JsPath \ "terminationDate").write[Long] and
-      (JsPath \ "success").write[Boolean] and
-      (JsPath \ "ResponseCode").write[Int] and
+      (JsPath \ "success").write[Boolean]      and
+      (JsPath \ "ResponseCode").write[Int]     and
       (JsPath \ "failureReason").writeNullable[String]) (response =>
-          (response.ARN,
+          (
+          response.ARN,
           response.terminationDate,
           response.success,
           response.ResponseCode,
-          response.failureReason)
+          response.failureReason
+          )
       )
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.gov.hmrc.enrolmentsorchestrator.helpers
 import play.api.Logger
 import play.api.libs.json.Json
@@ -40,10 +41,7 @@ def auditDeleteRequestEvent(agentDeleteRequest: AgentDeleteRequest): ExtendedDat
   ExtendedDataEvent(
     AUDIT_SOURCE,
     auditType,
-    detail = Json.obj(
-      "ARN"      -> agentDeleteRequest.ARN,
-      "terminationDate" -> agentDeleteRequest.terminationDate
-    )
+    detail = Json toJson agentDeleteRequest
   )
 }
 

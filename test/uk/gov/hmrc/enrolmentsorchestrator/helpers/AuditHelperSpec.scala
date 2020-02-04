@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
@@ -25,19 +26,19 @@ import scala.concurrent.ExecutionContext
 
 class AuditHelperSpec extends WordSpec with Matchers with MockitoSugar {
 implicit val hc: HeaderCarrier = HeaderCarrier()
-
+  val AUDIT_SOURCE = "enrolments-orchestrator"
+  val mockAuditConnector: AuditConnector = mock[AuditConnector]
+  val auditHelper: AuditHelper = new AuditHelper{
+    val auditConnector: AuditConnector = mockAuditConnector
+    implicit val executionContext: ExecutionContext = global
+  }
   "The AuditHelper" should {
     "create an AgentDeleteRequest when a request is received by the service" in {
-      val AUDIT_SOURCE = "enrolments-orchestrator"
       val auditType: String = "AgentDeleteRequest"
       val testAgentDeleteRequest: AgentDeleteRequest = AgentDeleteRequest("XXXX1234567", 15797056635L)
-      val mockAuditConnector = mock[AuditConnector]
-      val auditHelper = new AuditHelper{
-        val auditConnector: AuditConnector = mockAuditConnector
-        implicit val executionContext: ExecutionContext = global
-      }
       val agentDeleteResponseJson = Json toJson testAgentDeleteRequest
       val auditEventRequest = auditHelper.auditDeleteRequestEvent(testAgentDeleteRequest)
+
       auditEventRequest.auditSource shouldBe AUDIT_SOURCE
       auditEventRequest.auditType shouldBe auditType
       auditEventRequest.detail shouldBe agentDeleteResponseJson
@@ -45,16 +46,11 @@ implicit val hc: HeaderCarrier = HeaderCarrier()
     }
 
     "create an AgentDeleteResponse when a failed response is received" in {
-      val AUDIT_SOURCE = "enrolments-orchestrator"
       val auditType: String = "AgentDeleteResponse"
-      val testAgentDeleteResponse: AgentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, false, 500, Some("Internal Server Error"))
-      val mockAuditConnector = mock[AuditConnector]
-      val auditHelper = new AuditHelper {
-        val auditConnector: AuditConnector = mockAuditConnector
-        implicit val executionContext: ExecutionContext = global}
-
+      val testAgentDeleteResponse: AgentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, false: Boolean, 500, Some("Internal Server Error"))
       val agentDeleteResponseJson = Json toJson testAgentDeleteResponse
       val auditEventResponse = auditHelper.auditAgentDeleteResponseEvent(testAgentDeleteResponse)
+
       auditEventResponse.auditSource shouldBe AUDIT_SOURCE
       auditEventResponse.auditType shouldBe auditType
       auditEventResponse.detail shouldBe agentDeleteResponseJson
@@ -62,21 +58,14 @@ implicit val hc: HeaderCarrier = HeaderCarrier()
     }
 
     "create an AgentDeleteResponse when a successful response is received" in {
-      val AUDIT_SOURCE = "enrolments-orchestrator"
       val auditType: String = "AgentDeleteResponse"
-      val testAgentDeleteResponse: AgentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, true, 200, None)
-      val mockAuditConnector = mock[AuditConnector]
-      val auditHelper = new AuditHelper {
-        val auditConnector: AuditConnector = mockAuditConnector
-        implicit val executionContext: ExecutionContext = global}
-
+      val testAgentDeleteResponse: AgentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, true: Boolean, 200, None)
       val agentDeleteResponseJson = Json toJson testAgentDeleteResponse
       val auditEventResponse = auditHelper.auditAgentDeleteResponseEvent(testAgentDeleteResponse)
+
       auditEventResponse.auditSource shouldBe AUDIT_SOURCE
       auditEventResponse.auditType shouldBe auditType
       auditEventResponse.detail shouldBe agentDeleteResponseJson
     }
-
   }
-
 }

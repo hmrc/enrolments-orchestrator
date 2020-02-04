@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import org.scalatest.{Matchers, WordSpec}
 import play.api.libs.json
-import play.api.libs.json.{JsDefined, JsNumber, JsString, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.enrolmentsorchestrator.models._
 
 class AuditModelsSpec extends WordSpec with Matchers
@@ -24,12 +25,14 @@ class AuditModelsSpec extends WordSpec with Matchers
     "match the AgentDeleteRequest scala object" in {
       val agentDeleteRequest = AgentDeleteRequest("XXXX1234567", 15797056635L)
       val agentDeleteRequestJson = Json toJson agentDeleteRequest
+
       agentDeleteRequestJson \ "ARN" shouldBe JsDefined(JsString("XXXX1234567"))
       agentDeleteRequestJson \ "terminationDate" shouldBe JsDefined(JsNumber(15797056635L))
     }
     "match the AgentDeleteResponse scala object" in {
-      val agentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, false, 500, Some("Internal Server Error"))
+      val agentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, false: Boolean, 500, Some("Internal Server Error"))
       val agentDeleteResponseJson = Json toJson agentDeleteResponse
+
       agentDeleteResponseJson \ "ARN" shouldBe JsDefined(JsString("XXXX1234567"))
       agentDeleteResponseJson \ "terminationDate" shouldBe JsDefined(json.JsNumber(15797056635L))
       agentDeleteResponseJson \ "success" shouldBe JsDefined(json.JsBoolean(false))
