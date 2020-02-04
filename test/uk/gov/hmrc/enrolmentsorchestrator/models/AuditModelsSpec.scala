@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import org.scalatest.{Matchers, WordSpec}
 import play.api.libs.json
 import play.api.libs.json.{JsDefined, JsNumber, JsString, Json}
 import uk.gov.hmrc.enrolmentsorchestrator.models._
-import uk.gov.hmrc.enrolmentsorchestrator.helpers._
-
 
 class AuditModelsSpec extends WordSpec with Matchers
 {

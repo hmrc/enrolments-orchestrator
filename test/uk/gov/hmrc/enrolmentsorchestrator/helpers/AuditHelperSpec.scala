@@ -13,27 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json
-import play.api.libs.json._
-import play.api.libs.json.{JsDefined, JsNumber, JsString, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
+import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.enrolmentsorchestrator.models._
 import uk.gov.hmrc.enrolmentsorchestrator.helpers._
-
-
-
-import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class AuditHelperSpec extends WordSpec with Matchers with MockitoSugar {
 implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -74,7 +62,19 @@ implicit val hc: HeaderCarrier = HeaderCarrier()
     }
 
     "create an AgentDeleteResponse when a successful response is received" in {
-      pending
+      val AUDIT_SOURCE = "enrolments-orchestrator"
+      val auditType: String = "AgentDeleteResponse"
+      val testAgentDeleteResponse: AgentDeleteResponse = AgentDeleteResponse("XXXX1234567", 15797056635L, true, 200, None)
+      val mockAuditConnector = mock[AuditConnector]
+      val auditHelper = new AuditHelper {
+        val auditConnector: AuditConnector = mockAuditConnector
+        implicit val executionContext: ExecutionContext = global}
+
+      val agentDeleteResponseJson = Json toJson testAgentDeleteResponse
+      val auditEventResponse = auditHelper.auditAgentDeleteResponseEvent(testAgentDeleteResponse)
+      auditEventResponse.auditSource shouldBe AUDIT_SOURCE
+      auditEventResponse.auditType shouldBe auditType
+      auditEventResponse.detail shouldBe agentDeleteResponseJson
     }
 
   }

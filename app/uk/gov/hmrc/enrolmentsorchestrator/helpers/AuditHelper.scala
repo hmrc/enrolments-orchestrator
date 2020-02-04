@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.gov.hmrc.enrolmentsorchestrator.helpers
 import play.api.Logger
 import play.api.libs.json.Json
@@ -21,7 +20,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import uk.gov.hmrc.enrolmentsorchestrator.models._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 trait AuditHelper{
@@ -54,14 +52,7 @@ def auditDeleteRequestEvent(agentDeleteRequest: AgentDeleteRequest): ExtendedDat
     ExtendedDataEvent(
       AUDIT_SOURCE,
       auditType,
-      detail = Json.obj(
-        "ARN"      -> agentDeleteResponse.ARN,
-        "terminationDate" -> agentDeleteResponse.terminationDate,
-        "success"         -> agentDeleteResponse.success,
-        "ResponseCode"    -> agentDeleteResponse.ResponseCode,
-        "failureReason"   -> agentDeleteResponse.failureReason
-
-      )
+      detail = Json toJson agentDeleteResponse
     )
   }
 
