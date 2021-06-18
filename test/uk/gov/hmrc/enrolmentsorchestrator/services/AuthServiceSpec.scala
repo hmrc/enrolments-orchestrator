@@ -20,7 +20,7 @@ import play.api.mvc.Headers
 import play.api.test.Helpers.AUTHORIZATION
 import uk.gov.hmrc.enrolmentsorchestrator.models.BasicAuthentication
 import uk.gov.hmrc.enrolmentsorchestrator.{AuthHelper, UnitSpec}
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.Authorization
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

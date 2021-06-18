@@ -31,7 +31,7 @@ trait AuthHelper extends MockitoSugar {
   val mockAuthConnector: AuthConnector = mock[AuthConnector]
   val authService: AuthService = new AuthService(mockAuthConnector)
 
-  val testHttpResponse = HttpResponse(200, responseHeaders = Map(AUTHORIZATION -> Seq("BEARER AUTHORIZATION")))
+  val testHttpResponse = HttpResponse(200, "", headers = Map(AUTHORIZATION -> Seq("BEARER AUTHORIZATION")))
   when(mockAuthConnector.createBearerToken(any())(any(), any()))
     .thenReturn(Future.successful(testHttpResponse))
 

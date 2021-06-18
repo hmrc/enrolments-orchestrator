@@ -25,7 +25,7 @@ import play.api.mvc.Headers
 import uk.gov.hmrc.enrolmentsorchestrator.connectors.AuthConnector
 import uk.gov.hmrc.enrolmentsorchestrator.models.BasicAuthentication
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.http.Authorization
 
 import scala.concurrent._
 import scala.util.matching.Regex
