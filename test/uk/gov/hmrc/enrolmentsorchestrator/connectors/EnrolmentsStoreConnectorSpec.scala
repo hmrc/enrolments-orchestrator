@@ -36,9 +36,9 @@ class EnrolmentsStoreConnectorSpec extends UnitSpec with MockitoSugar {
 
   "EnrolmentsStoreConnector" should {
     "connect to EnrolmentsStore and return HttpResponse" in {
-      val testHttpResponse = HttpResponse(200)
+      val testHttpResponse = HttpResponse(200, "")
       val enrolmentKey = "enrolmentKey"
-      when(mockHttpClient.GET[HttpResponse](contains(enrolmentKey))(any(), any(), any()))
+      when(mockHttpClient.GET[HttpResponse](contains(enrolmentKey), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(testHttpResponse))
       await(connector.es1GetPrincipalGroups(enrolmentKey)) shouldBe testHttpResponse
     }

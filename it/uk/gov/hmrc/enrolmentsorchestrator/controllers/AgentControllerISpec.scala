@@ -20,6 +20,7 @@ import play.api.Logger
 import uk.gov.hmrc.enrolmentsorchestrator.helpers.{LogCapturing, TestSetupHelper}
 import uk.gov.hmrc.enrolmentsorchestrator.services.EnrolmentsStoreService
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.play.bootstrap.filters.DefaultLoggingFilter
 
 
 class AgentControllerISpec extends TestSetupHelper with LogCapturing {
@@ -38,7 +39,7 @@ class AgentControllerISpec extends TestSetupHelper with LogCapturing {
         startESProxyWireMockServerFullHappyPath
 
         withClient { wsClient =>
-          withCaptureOfLoggingFrom(Logger) { logEvents =>
+          withCaptureOfLoggingFrom(Logger(classOf[DefaultLoggingFilter])) { logEvents =>
             await(
               wsClient.url(resource(s"$es9DeleteBaseUrl/$testARN"))
                 .withHttpHeaders(HeaderNames.authorisation -> s"Basic ${basicAuth("AgentTermDESUser:password")}")
@@ -74,7 +75,7 @@ class AgentControllerISpec extends TestSetupHelper with LogCapturing {
 
       """Request received but basic auth token not supplied. A logger.info about "response is 401" will fired""" in {
         withClient { wsClient =>
-          withCaptureOfLoggingFrom(Logger) { logEvents =>
+          withCaptureOfLoggingFrom(Logger(classOf[DefaultLoggingFilter])) { logEvents =>
             val response = await(wsClient.url(resource(s"$es9DeleteBaseUrl/$testARN")).delete())
             response.status shouldBe 401
             response.body shouldBe "BasicAuthentication failed"
@@ -89,7 +90,7 @@ class AgentControllerISpec extends TestSetupHelper with LogCapturing {
         agentStatusChangeReturn401
 
         withClient { wsClient =>
-          withCaptureOfLoggingFrom(Logger) { logEvents =>
+          withCaptureOfLoggingFrom(Logger(classOf[DefaultLoggingFilter])) { logEvents =>
             val response = await(wsClient.url(resource(s"$es9DeleteBaseUrl/$testARN"))
               .withHttpHeaders(HeaderNames.authorisation -> s"Basic ${basicAuth("AgentTermDESUser:password")}")
               .delete())

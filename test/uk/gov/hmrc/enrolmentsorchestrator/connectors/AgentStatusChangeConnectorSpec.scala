@@ -36,7 +36,7 @@ class AgentStatusChangeConnectorSpec extends UnitSpec with MockitoSugar {
 
   "AgentStatusChangeConnector" should {
     "connect to AgentStatusChange and return HttpResponse" in {
-      val testHttpResponse = HttpResponse(200)
+      val testHttpResponse = HttpResponse(200, "")
       val arn = "arn"
       when(mockHttpClient.DELETE[HttpResponse](contains(arn), any())(any(), any(), any())).thenReturn(Future.successful(testHttpResponse))
       await(connector.agentStatusChangeToTerminate(arn)) shouldBe testHttpResponse

@@ -38,7 +38,7 @@ class AuthConnectorSpec extends UnitSpec with MockitoSugar {
 
   "AuthConnector" should {
     "connect to auth to create session" in {
-      val testHttpResponse = HttpResponse(200, responseHeaders = Map(AUTHORIZATION -> Seq(AUTHORIZATION)))
+      val testHttpResponse = HttpResponse(200, "", headers = Map(AUTHORIZATION -> Seq(AUTHORIZATION)))
       when(mockHttpClient.POST[PrivilegedApplicationClientLogin, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
         .thenReturn(Future.successful(testHttpResponse))
       await(connector.createBearerToken("applicationName")).header(AUTHORIZATION) shouldBe Some(AUTHORIZATION)

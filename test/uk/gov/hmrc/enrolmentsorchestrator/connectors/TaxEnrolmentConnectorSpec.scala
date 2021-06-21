@@ -36,7 +36,7 @@ class TaxEnrolmentConnectorSpec extends UnitSpec with MockitoSugar {
 
   "EnrolmentsStoreConnector" should {
     "connect to EnrolmentsStore and return HttpResponse" in {
-      val testHttpResponse = HttpResponse(200)
+      val testHttpResponse = HttpResponse(200, "")
       val enrolmentKey = "enrolmentKey"
       val groupId = "groupId"
       when(mockHttpClient.DELETE[HttpResponse](contains(groupId), any())(any(), any(), any())).thenReturn(Future.successful(testHttpResponse))

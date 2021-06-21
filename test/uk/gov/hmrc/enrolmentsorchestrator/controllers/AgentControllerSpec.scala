@@ -26,8 +26,7 @@ import uk.gov.hmrc.enrolmentsorchestrator.config.AppConfig
 import uk.gov.hmrc.enrolmentsorchestrator.connectors.AgentStatusChangeConnector
 import uk.gov.hmrc.enrolmentsorchestrator.models.BasicAuthentication
 import uk.gov.hmrc.enrolmentsorchestrator.services.{AuditService, AuthService, EnrolmentsStoreService}
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.{HttpResponse, Upstream4xxResponse}
+import uk.gov.hmrc.http.{Authorization, HttpResponse, UpstreamErrorResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -37,9 +36,9 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
   "DELETE /enrolments-orchestrator/agents/:ARN?terminationDate=Option[Long] ?= None" should {
 
     "return 200, Request received and the attempt at deletion will be processed" in new Setup {
-      val testHttpResponse = HttpResponse(204, responseString = Some("done"))
+      val testHttpResponse = HttpResponse(204, "done")
 
-      val testAgentStatusChangeHttpResponse = HttpResponse(200, responseString = Some("done"))
+      val testAgentStatusChangeHttpResponse = HttpResponse(200, "done")
       when(mockAgentStatusChangeConnector.agentStatusChangeToTerminate(any)(any, any))
         .thenReturn(Future.successful(testAgentStatusChangeHttpResponse))
 
@@ -65,7 +64,7 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
     }
 
     "return 401, Request received but AgentStatusChange return 401 response" in new Setup {
-      val testAgentStatusChangeHttpResponse = HttpResponse(401, responseString = Some("notAuthed"))
+      val testAgentStatusChangeHttpResponse = HttpResponse(401, "notAuthed")
       when(mockAgentStatusChangeConnector.agentStatusChangeToTerminate(any)(any, any))
         .thenReturn(Future.successful(testAgentStatusChangeHttpResponse))
       doNothing.when(mockAuditService).auditDeleteRequest(any, any)(any)
@@ -77,7 +76,7 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
 
     "return 401, Request received but AgentStatusChange throw 401 response" in new Setup {
       when(mockAgentStatusChangeConnector.agentStatusChangeToTerminate(any)(any, any))
-        .thenReturn(Future.failed(Upstream4xxResponse("notAuthed", 401, 401)))
+        .thenReturn(Future.failed(UpstreamErrorResponse("notAuthed", 401, 401)))
       doNothing.when(mockAuditService).auditDeleteRequest(any, any)(any)
       doNothing.when(mockAuditService).auditFailedAgentDeleteResponse(any, any, any, any)(any)
 
@@ -87,14 +86,14 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
     }
 
     "return 401, Request received but tax-enrolment throw 401 response" in new Setup {
-      val testAgentStatusChangeHttpResponse = HttpResponse(200, responseString = Some("done"))
+      val testAgentStatusChangeHttpResponse = HttpResponse(200, "done")
 
       when(mockAuthService.createBearerToken(eqTo(Some(basicAuthHeader)))(any, any))
         .thenReturn(Future.successful(Some(Authorization("pls"))))
       when(mockAgentStatusChangeConnector.agentStatusChangeToTerminate(any)(any, any))
         .thenReturn(Future.successful(testAgentStatusChangeHttpResponse))
       when(mockEnrolmentsStoreService.terminationByEnrolmentKey(any)(any, any))
-        .thenReturn(Future.failed(Upstream4xxResponse("notAuthed", 401, 401)))
+        .thenReturn(Future.failed(UpstreamErrorResponse("notAuthed", 401, 401)))
       doNothing.when(mockAuditService).auditDeleteRequest(any, any)(any)
       doNothing.when(mockAuditService).auditFailedAgentDeleteResponse(any, any, any, any)(any)
 
@@ -104,9 +103,9 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
     }
 
     "return 500 if down stream services return 500" in new Setup {
-      val testHttpResponse = HttpResponse(500, responseString = Some("error"))
+      val testHttpResponse = HttpResponse(500, "error")
 
-      val testAgentStatusChangeHttpResponse = HttpResponse(200, responseString = Some("done"))
+      val testAgentStatusChangeHttpResponse = HttpResponse(200, "done")
 
       when(mockAuthService.createBearerToken(eqTo(Some(basicAuthHeader)))(any, any))
         .thenReturn(Future.successful(Some(Authorization("pls"))))
@@ -124,7 +123,7 @@ class AgentControllerSpec extends UnitSpec with MockitoSugar with GuiceOneAppPer
     }
 
     "return 500 if there are anything wrong with down stream such as EnrolmentsStore" in new Setup {
-      val testAgentStatusChangeHttpResponse = HttpResponse(200, responseString = Some("done"))
+      val testAgentStatusChangeHttpResponse = HttpResponse(200, "done")
 
       when(mockAuthService.createBearerToken(eqTo(Some(basicAuthHeader)))(any, any))
         .thenReturn(Future.successful(Some(Authorization("pls"))))
