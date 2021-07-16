@@ -3,7 +3,7 @@ import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.ServiceManagerPlugin.Keys.itDependenciesList
 import uk.gov.hmrc.ServiceManagerPlugin.serviceManagerSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.{ExternalService, SbtArtifactory}
+import uk.gov.hmrc.ExternalService
 
 
 val appName = "enrolments-orchestrator"
@@ -29,7 +29,7 @@ parallelExecution in Test := false
 
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(PlayKeys.playDefaultPort := 9456)
   .settings(
     majorVersion                     := 0,
